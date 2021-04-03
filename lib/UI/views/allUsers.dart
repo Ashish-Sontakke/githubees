@@ -26,60 +26,34 @@ class _AllUsersViewState extends State<AllUsersView> {
 
   @override
   Widget build(BuildContext context) {
-    // return FutureBuilder<List<GithubUser>>(
-    //   future: NetworkService().fetchUsers(http.Client()),
-    //   builder: (context, snapshot) {
-    //     if (snapshot.hasData) {
-    //       return ListView(
-    //         shrinkWrap: true,
-    //         controller: controller,
-    //         children: [
-    //           ListView.builder(
-    //             physics: NeverScrollableScrollPhysics(),
-    //             shrinkWrap: true,
-    //             itemCount: snapshot.data.length,
-    //             itemBuilder: (context, index) {
-    //               return UserTile(
-    //                 user: snapshot.data[index],
-    //               );
-    //             },
-    //           ),
-    //           Container(
-    //             child: Center(
-    //               child: CircularProgressIndicator(),
-    //             ),
-    //           )
-    //         ],
-    //       );
-    //     } else {
-    //       return Center(
-    //         child: CircularProgressIndicator(),
-    //       );
-    //     }
-    //   },
-    // );
-
     return Consumer<NetworkService>(builder: (context, service, _) {
-      return ListView(
-        shrinkWrap: true,
-        controller: controller,
-        children: [
-          ListView.builder(
-            physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: fetchedUsers.length,
-            itemBuilder: (context, index) {
-              return UserTile(
-                user: fetchedUsers[index],
-              );
-            },
-          ),
-          Container(
-            child: Center(
-              child: CircularProgressIndicator(),
+      return RefreshIndicator(
+        onRefresh: () async {
+          await Provider.of<NetworkService>(context, listen: false)
+              .refreshUsers(http.Client());
+          return;
+        },
+        child: ListView(
+          shrinkWrap: true,
+          controller: controller,
+          children: [
+            ListView.builder(
+              physics: NeverScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: fetchedUsers.length,
+              itemBuilder: (context, index) {
+                return UserTile(
+                  user: fetchedUsers[index],
+                );
+              },
             ),
-          )
-        ],
+            Container(
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          ],
+        ),
       );
     });
   }
