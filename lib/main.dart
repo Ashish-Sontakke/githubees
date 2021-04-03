@@ -69,9 +69,12 @@ class InitialiseApp extends StatelessWidget {
           if (snapshot.hasData) {
             return MyHomePage();
           } else {
-            return Container(
+            return Card(
               child: Center(
-                child: Text('Loading Data'),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(),
+                ),
               ),
             );
           }
